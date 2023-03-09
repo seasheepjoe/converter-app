@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { SlideInLeft, SlideOutRight } from 'react-native-reanimated';
 import {
   SafeAreaView,
   useSafeAreaFrame,
@@ -12,11 +13,7 @@ interface ConversionMenuItem {
   value: string;
 }
 
-interface Unit {
-  key: string;
-  value: string;
-}
-
+// TODO: add a list of categories and units
 const RootContainer: React.FC = () => {
   const shouldStopFiring = useRef<boolean>(false);
   const [selectedCategory, setSelectedCategory] =
@@ -26,6 +23,13 @@ const RootContainer: React.FC = () => {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
   const frame = useSafeAreaFrame();
+
+  const triggerSlider = (direction: 'left' | 'right') => {
+    shouldStopFiring.current = true;
+    console.log('slider moves ', direction);
+    setUnitBase('mile');
+  };
+
   const gesture = useMemo(() => {
     let originX = 0;
     let originY = 0;
@@ -65,6 +69,7 @@ const RootContainer: React.FC = () => {
         console.log('on pan end');
       })
       .maxPointers(1)
+      .runOnJS(true)
       .shouldCancelWhenOutside(true);
   }, [frame.height, frame.width, insets.bottom, insets.top]);
 
@@ -73,16 +78,18 @@ const RootContainer: React.FC = () => {
     shouldStopFiring.current = true;
   };
 
-  const triggerSlider = (direction: 'left' | 'right') => {
-    shouldStopFiring.current = true;
-    console.log('slider moves ', direction);
-  };
   return (
     <SafeAreaView style={styles.container}>
       <GestureDetector gesture={gesture}>
         <View style={styles.content}>
           <View style={styles.block}>
-            <Text style={styles.text}>123</Text>
+            <Animated.Text
+              style={styles.text}
+              entering={SlideInLeft}
+              exiting={SlideOutRight}
+              key={unitBase}>
+              123
+            </Animated.Text>
           </View>
           <View style={styles.hairline} />
           <View style={styles.block}>
