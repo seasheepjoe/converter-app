@@ -125,6 +125,6 @@ export type Formula<T extends ConversionUnit> = Omit<
 export type ConversionsOptions<T extends ConversionUnit> = {
   key: ConversionCategoryType;
   approx?: Array<keyof Formula<T>>;
-  // items: Array<ConversionItem<T>>;
+  items: Array<T>;
   formulas: Formula<T>;
 };

@@ -18,6 +18,7 @@ const temperatureCategory: ConversionsOptions<TemperatureUnit> = {
     farenheit_to_kelvin: (n: number) => (n - 32) * (5 / 9) + 273.15,
     farenheit_to_celsius: (n: number) => (n - 32) * (5 / 9),
   },
+  items: ['celsius', 'farenheit', 'kelvin'],
 };
 
 const distanceCategory: ConversionsOptions<DistanceUnit> = {
@@ -144,6 +145,19 @@ const distanceCategory: ConversionsOptions<DistanceUnit> = {
     light_year_to_foot: value => value * 3.106e16,
     light_year_to_inch: value => value * 3.728e17,
   },
+  items: [
+    'centimeter',
+    'meter',
+    'foot',
+    'inch',
+    'kilometer',
+    'light_year',
+    'micrometer',
+    'mile',
+    'millimeter',
+    'nanometer',
+    'yard',
+  ],
 };
 
 const areaCategory: ConversionsOptions<AreaUnit> = {
@@ -270,6 +284,19 @@ const areaCategory: ConversionsOptions<AreaUnit> = {
     acre_to_square_foot: value => value * 43560,
     acre_to_square_inch: value => value * 6.273e6,
   },
+  items: [
+    'acre',
+    'hectare',
+    'square_centimeter',
+    'square_foot',
+    'square_inch',
+    'square_kilometer',
+    'square_meter',
+    'square_micrometer',
+    'square_mile',
+    'square_millimeter',
+    'square_yard',
+  ],
 };
 
 const volumeCategory: ConversionsOptions<VolumeUnit> = {
@@ -811,6 +838,31 @@ const volumeCategory: ConversionsOptions<VolumeUnit> = {
     cubic_inch_to_cubic_yard: value => value * 0.0000214334705,
     cubic_inch_to_cubic_foot: value => value * 0.000578703704,
   },
+  items: [
+    'cubic_centimeter',
+    'cubic_foot',
+    'cubic_inch',
+    'cubic_kilometer',
+    'cubic_meter',
+    'cubic_mile',
+    'cubic_millimeter',
+    'cubic_yard',
+    'imperial_fluid_ounce',
+    'imperial_gallon',
+    'imperial_pint',
+    'imperial_quart',
+    'imperial_table_spoon',
+    'imperial_tea_spoon',
+    'liter',
+    'milliliter',
+    'us_cup',
+    'us_gallon',
+    'us_fluid_ounce',
+    'us_pint',
+    'us_quart',
+    'us_table_spoon',
+    'us_tea_spoon',
+  ],
 };
 
 const weightCategory: ConversionsOptions<WeightUnit> = {
@@ -916,6 +968,18 @@ const weightCategory: ConversionsOptions<WeightUnit> = {
     atomic_mass_unit_to_ounce: value => value * 4.3091e27,
     atomic_mass_unit_to_carrat: value => value * 2.42364e28,
   },
+  items: [
+    'atomic_mass_unit',
+    'carrat',
+    'gram',
+    'kilogram',
+    'long_ton',
+    'metric_ton',
+    'milligram',
+    'ounce',
+    'pound',
+    'short_ton',
+  ],
 };
 
 const timeCategory: ConversionsOptions<TimeUnit> = {
@@ -1042,15 +1106,28 @@ const timeCategory: ConversionsOptions<TimeUnit> = {
     year_to_week: value => value * 52.143,
     year_to_month: value => value * 12,
   },
+  items: [
+    'day',
+    'hour',
+    'microsecond',
+    'millisecond',
+    'minute',
+    'month',
+    'nanosecond',
+    'picosecond',
+    'second',
+    'week',
+    'year',
+  ],
 };
 
-const conversionOptions = [
-  temperatureCategory,
-  distanceCategory,
-  areaCategory,
-  volumeCategory,
-  weightCategory,
-  timeCategory,
-];
+const conversionOptions = {
+  temperature: temperatureCategory,
+  distance: distanceCategory,
+  area: areaCategory,
+  volume: volumeCategory,
+  weight: weightCategory,
+  time: timeCategory,
+} as const;
 
 export { conversionOptions };
