@@ -6,9 +6,9 @@ export type ConversionCategoryType =
   | 'weight'
   | 'time';
 
-export type TemperatureUnit = 'celsius' | 'farenheit' | 'kelvin';
+export type TemperatureUnits = 'celsius' | 'farenheit' | 'kelvin';
 
-export type DistanceUnit =
+export type DistanceUnits =
   | 'meter'
   | 'kilometer'
   | 'centimeter'
@@ -21,7 +21,7 @@ export type DistanceUnit =
   | 'inch'
   | 'light_year';
 
-export type AreaUnit =
+export type AreaUnits =
   | 'square_meter'
   | 'square_kilometer'
   | 'square_centimeter'
@@ -34,7 +34,7 @@ export type AreaUnit =
   | 'square_inch'
   | 'acre';
 
-export type VolumeUnit =
+export type VolumeUnits =
   | 'cubic_meter'
   | 'cubic_kilometer'
   | 'cubic_centimeter'
@@ -59,7 +59,7 @@ export type VolumeUnit =
   | 'cubic_foot'
   | 'cubic_inch';
 
-export type WeightUnit =
+export type WeightUnits =
   | 'kilogram'
   | 'gram'
   | 'milligram'
@@ -81,7 +81,7 @@ export type WeightUnit =
   | 'carrat'
   | 'atomic_mass_unit';
 
-export type TimeUnit =
+export type TimeUnits =
   | 'second'
   | 'millisecond'
   | 'microsecond'
@@ -108,12 +108,12 @@ export type TimeUnit =
 export type Duplicates<T extends string> = T extends T ? `${T}_to_${T}` : never;
 
 export type ConversionUnit =
-  | TemperatureUnit
-  | DistanceUnit
-  | AreaUnit
-  | VolumeUnit
-  | WeightUnit
-  | TimeUnit;
+  | TemperatureUnits
+  | DistanceUnits
+  | AreaUnits
+  | VolumeUnits
+  | WeightUnits
+  | TimeUnits;
 
 export type Formula<T extends ConversionUnit> = Omit<
   {
@@ -122,7 +122,7 @@ export type Formula<T extends ConversionUnit> = Omit<
   Duplicates<T>
 >;
 
-export type ConversionsOptions<T extends ConversionUnit> = {
+export type ConversionItem<T extends ConversionUnit> = {
   key: ConversionCategoryType;
   approx?: Array<keyof Formula<T>>;
   items: Array<T>;

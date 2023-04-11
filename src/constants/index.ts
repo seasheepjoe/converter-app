@@ -1,14 +1,15 @@
 import {
-  ConversionsOptions,
-  TemperatureUnit,
-  DistanceUnit,
-  AreaUnit,
-  VolumeUnit,
-  WeightUnit,
-  TimeUnit,
+  TemperatureUnits,
+  DistanceUnits,
+  AreaUnits,
+  VolumeUnits,
+  WeightUnits,
+  TimeUnits,
+  ConversionItem,
+  ConversionCategoryType,
 } from '../types';
 
-const temperatureCategory: ConversionsOptions<TemperatureUnit> = {
+const temperatureCategory: ConversionItem<TemperatureUnits> = {
   key: 'temperature',
   formulas: {
     celsius_to_kelvin: (n: number) => n + 273.15,
@@ -21,7 +22,7 @@ const temperatureCategory: ConversionsOptions<TemperatureUnit> = {
   items: ['celsius', 'farenheit', 'kelvin'],
 };
 
-const distanceCategory: ConversionsOptions<DistanceUnit> = {
+const distanceCategory: ConversionItem<DistanceUnits> = {
   key: 'distance',
   formulas: {
     meter_to_kilometer: value => value / 1000,
@@ -160,7 +161,7 @@ const distanceCategory: ConversionsOptions<DistanceUnit> = {
   ],
 };
 
-const areaCategory: ConversionsOptions<AreaUnit> = {
+const areaCategory: ConversionItem<AreaUnits> = {
   key: 'area',
   formulas: {
     square_meter_to_square_kilometer: value => value / 1e6,
@@ -299,7 +300,7 @@ const areaCategory: ConversionsOptions<AreaUnit> = {
   ],
 };
 
-const volumeCategory: ConversionsOptions<VolumeUnit> = {
+const volumeCategory: ConversionItem<VolumeUnits> = {
   key: 'volume',
   approx: [
     'us_cup_to_cubic_inch',
@@ -865,7 +866,7 @@ const volumeCategory: ConversionsOptions<VolumeUnit> = {
   ],
 };
 
-const weightCategory: ConversionsOptions<WeightUnit> = {
+const weightCategory: ConversionItem<WeightUnits> = {
   key: 'weight',
   formulas: {
     kilogram_to_gram: value => value * 1000,
@@ -982,7 +983,7 @@ const weightCategory: ConversionsOptions<WeightUnit> = {
   ],
 };
 
-const timeCategory: ConversionsOptions<TimeUnit> = {
+const timeCategory: ConversionItem<TimeUnits> = {
   key: 'time',
   formulas: {
     second_to_millisecond: value => value * 1000,
@@ -1121,7 +1122,21 @@ const timeCategory: ConversionsOptions<TimeUnit> = {
   ],
 };
 
-const conversionOptions = {
+const conversionOptions: {
+  [I in ConversionCategoryType]: I extends 'temperature'
+    ? ConversionItem<TemperatureUnits>
+    : I extends 'distance'
+    ? ConversionItem<DistanceUnits>
+    : I extends 'area'
+    ? ConversionItem<AreaUnits>
+    : I extends 'volume'
+    ? ConversionItem<VolumeUnits>
+    : I extends 'weight'
+    ? ConversionItem<WeightUnits>
+    : I extends 'time'
+    ? ConversionItem<TimeUnits>
+    : never;
+} = {
   temperature: temperatureCategory,
   distance: distanceCategory,
   area: areaCategory,
