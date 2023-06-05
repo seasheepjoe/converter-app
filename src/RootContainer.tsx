@@ -24,7 +24,7 @@ let tapCount: number = 1;
 export default function RootContainer() {
   const [category, setCategory] =
     useState<ConversionCategoryType>('temperature');
-  const converter = useRef<Converter>(new Converter(category)).current;
+  const converter = useRef<Converter>(new Converter(category));
   const [sourceUnit, setSourceUnit] = useState(
     conversionOptions[category].items[0],
   );
@@ -86,7 +86,7 @@ export default function RootContainer() {
     convert(n, 'base');
   };
   const convert = (n: string, operation: 'target' | 'base') => {
-    let result = converter.convert(n, sourceUnit, convertedUnit);
+    let result = converter.current.convert(n, sourceUnit, convertedUnit);
     if (operation === 'base') {
       setSourceValue(result);
     } else if (operation === 'target') {
@@ -110,6 +110,7 @@ export default function RootContainer() {
       Object.keys(conversionOptions).map(key => ({
         text: fr[`category_${key}`],
         onPress: () => {
+          converter.current = new Converter(key);
           setCategory(key);
           setSourceUnit(conversionOptions[key].items[0]);
           setConvertedUnit(conversionOptions[key].items[1]);
