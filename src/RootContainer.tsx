@@ -1,23 +1,23 @@
-import { ReactNode, useCallback, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Alert,
-  SafeAreaView,
+  Pressable,
   StyleSheet,
-  TouchableWithoutFeedback,
+  Text,
+  TextInput,
   View,
 } from 'react-native';
-import {
-  Gesture,
-  GestureDetector,
-  TextInput,
-} from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
-import { useSafeAreaFrame } from 'react-native-safe-area-context';
 import { ConversionCategoryType } from './types';
 import { conversionOptions } from './constants';
 import * as utils from './utils/array';
 import { Converter } from './utils/converter';
 import fr from './translations/fr.json';
+import {
+  useSafeAreaFrame,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import { VerticalText } from './components/VerticalText';
+import LinearGradient from 'react-native-linear-gradient';
 
 let tapCount: number = 1;
 
@@ -33,7 +33,7 @@ export default function RootContainer() {
   );
   const [sourceValue, setSourceValue] = useState<string>('0');
   const [convertedValue, setConvertedValue] = useState<string>('0');
-  const onSourceUnitSwipeLeft = () => {
+  const onLeftPressFromSource = () => {
     const arr = conversionOptions[category].items;
     const nextUnit = utils.nextInArray(arr, sourceUnit);
     setSourceUnit(nextUnit as typeof sourceUnit);
@@ -43,7 +43,7 @@ export default function RootContainer() {
       );
     }
   };
-  const onSourceUnitSwipeRight = () => {
+  const onRightPressFromSource = () => {
     const arr = conversionOptions[category].items;
     const previousUnit = utils.previousInArray(arr, sourceUnit);
     setSourceUnit(previousUnit as typeof sourceUnit);
@@ -53,7 +53,7 @@ export default function RootContainer() {
       );
     }
   };
-  const onConvertedUnitSwipeLeft = () => {
+  const onLeftPressFromTarget = () => {
     const arr = conversionOptions[category].items;
     const nextUnit = utils.nextInArray(arr, convertedUnit);
     setConvertedUnit(nextUnit as typeof convertedUnit);
@@ -63,7 +63,7 @@ export default function RootContainer() {
       );
     }
   };
-  const onConvertedUnitSwipeRight = () => {
+  const onRightPressFromTarget = () => {
     const arr = conversionOptions[category].items;
     const previousUnit = utils.previousInArray(arr, convertedUnit);
     setConvertedUnit(previousUnit as typeof convertedUnit);
@@ -71,14 +71,14 @@ export default function RootContainer() {
       setSourceUnit(utils.nextInArray(arr, sourceUnit) as typeof sourceUnit);
     }
   };
-  const onBaseValueChange = (n: string) => {
+  const onSourceValueChange = (n: string) => {
     if (n.length <= 0) {
       return;
     }
     setSourceValue(n);
     convert(n, 'target');
   };
-  const onTargetValueChange = (n: string) => {
+  const onConvertedValueChange = (n: string) => {
     if (n.length <= 0) {
       return;
     }
@@ -118,119 +118,129 @@ export default function RootContainer() {
       })),
     );
   };
+  const frame = useSafeAreaFrame();
+  const maxHeight = useMemo(() => {
+    return frame.height / 2;
+  }, [frame]);
   const styles = useStyles();
   return (
-    <TouchableWithoutFeedback onPress={tap}>
-      <SafeAreaView style={styles.container}>
-        <Swiper
-          onSwipeLeft={onSourceUnitSwipeLeft}
-          onSwipeRight={onSourceUnitSwipeRight}>
-          <TextInput
-            onChangeText={onBaseValueChange}
-            keyboardType={'decimal-pad'}
-            style={styles.textInput}
-            defaultValue={sourceValue}
+    <View style={styles.container}>
+      <View style={styles.block}>
+        <Pressable onPress={onLeftPressFromSource} style={styles.button}>
+          <VerticalText
+            text={utils.previousInArray(
+              conversionOptions[category].items,
+              sourceUnit,
+            )}
+            style={styles.floatingText}
+            maxHeight={maxHeight}
           />
-          <View style={styles.unitContainer}>
-            <Animated.Text key={sourceUnit} style={styles.unitText}>
-              {fr[`unit_${sourceUnit}`]}
-            </Animated.Text>
-          </View>
-        </Swiper>
+        </Pressable>
+        <TextInput
+          onChangeText={onSourceValueChange}
+          keyboardType={'decimal-pad'}
+          style={styles.textInput}
+          defaultValue={sourceValue}
+        />
+        <Pressable onPress={onRightPressFromSource} style={styles.button}>
+          <VerticalText
+            text={utils.nextInArray(
+              conversionOptions[category].items,
+              sourceUnit,
+            )}
+            style={styles.floatingText}
+            maxHeight={maxHeight}
+          />
+        </Pressable>
+      </View>
+      <View style={styles.middle}>
+        <Text style={styles.currentUnit}>{sourceUnit}</Text>
         <View style={styles.hairline} />
-        <Swiper
-          onSwipeLeft={onConvertedUnitSwipeLeft}
-          onSwipeRight={onConvertedUnitSwipeRight}>
-          <TextInput
-            onChangeText={onTargetValueChange}
-            keyboardType={'decimal-pad'}
-            style={styles.textInput}
-            defaultValue={convertedValue}
+        <Text style={styles.currentUnit}>{convertedUnit}</Text>
+      </View>
+      <View style={styles.block}>
+        <Pressable onPress={onLeftPressFromTarget} style={styles.button}>
+          <LinearGradient colors={['#000', '#0f0']} />
+          <VerticalText
+            text={utils.previousInArray(
+              conversionOptions[category].items,
+              convertedUnit,
+            )}
+            style={styles.floatingText}
+            maxHeight={maxHeight}
           />
-          <View style={styles.unitContainer}>
-            <Animated.Text key={convertedUnit} style={styles.unitText}>
-              {fr[`unit_${convertedUnit}`]}
-            </Animated.Text>
-          </View>
-        </Swiper>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+        </Pressable>
+        <TextInput
+          onChangeText={onConvertedValueChange}
+          keyboardType={'decimal-pad'}
+          style={styles.textInput}
+          defaultValue={convertedValue}
+        />
+        <Pressable onPress={onRightPressFromTarget} style={styles.button}>
+          <VerticalText
+            text={utils.nextInArray(
+              conversionOptions[category].items,
+              sourceUnit,
+            )}
+            style={styles.floatingText}
+            maxHeight={maxHeight}
+          />
+        </Pressable>
+      </View>
+    </View>
   );
 }
-
-interface CarouselProps {
-  onSwipeLeft: () => void;
-  onSwipeRight: () => void;
-  children: ReactNode;
-}
-
-function Swiper({ onSwipeLeft, onSwipeRight, children }: CarouselProps) {
-  const shouldStopFiring = useRef<boolean>(true);
-  const triggerSwiper = useCallback(
-    (direction: 'left' | 'right') => {
-      shouldStopFiring.current = true;
-      if (direction === 'left') {
-        onSwipeLeft();
-      } else {
-        onSwipeRight();
-      }
-    },
-    [onSwipeLeft, onSwipeRight],
-  );
-  const gesture = useMemo(() => {
-    return Gesture.Pan()
-      .onStart(() => {
-        shouldStopFiring.current = false;
-      })
-      .onChange(e => {
-        if (shouldStopFiring.current === true) return;
-        if (e.velocityX < 0) {
-          triggerSwiper('right');
-        } else if (e.velocityX > 0) {
-          triggerSwiper('left');
-        }
-      })
-      .activeOffsetX([100, -100])
-      .minVelocityX(150)
-      .runOnJS(true);
-  }, [triggerSwiper]);
-  const styles = useCarouselStyles();
-  return (
-    <GestureDetector gesture={gesture}>
-      <View style={styles.container}>{children}</View>
-    </GestureDetector>
-  );
-}
-
-const useCarouselStyles = () => {
-  return StyleSheet.create({
-    container: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '100%',
-      borderWidth: 1,
-      borderColor: 'red',
-      flex: 1,
-    },
-
-    text: {
-      color: '#fff',
-      fontSize: 14,
-      fontWeight: 'bold',
-    },
-  });
-};
 
 const useStyles = () => {
-  const { width, height } = useSafeAreaFrame();
-
+  const insets = useSafeAreaInsets();
   return StyleSheet.create({
     container: {
+      width: '100%',
+      height: '100%',
       backgroundColor: '#000',
-      width,
-      height,
-      justifyContent: 'space-evenly',
+      justifyContent: 'center',
       alignItems: 'center',
+    },
+
+    floatingText: {
+      position: 'absolute',
+      zIndex: 10,
+    },
+
+    block: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+
+    middle: {
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    button: {
+      flex: 1,
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    buttonText: {
+      color: 'white',
+      fontWeight: '900',
+    },
+
+    textInput: {
+      flex: 4,
+      color: 'white',
+      fontSize: 50,
+      fontWeight: 'bold',
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
     },
 
     hairline: {
@@ -239,27 +249,12 @@ const useStyles = () => {
       backgroundColor: 'gray',
     },
 
-    unitContainer: {
-      position: 'absolute',
-      right: 25,
-      bottom: 25,
-    },
-
-    unitText: {
+    currentUnit: {
       color: '#fff',
-      fontWeight: '500',
-      fontSize: 24,
-    },
-
-    textInput: {
-      color: 'white',
-      fontSize: 50,
+      zIndex: 11,
       fontWeight: 'bold',
-      width: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-      alignSelf: 'center',
-      paddingHorizontal: 25,
+      fontSize: 12,
+      marginVertical: 5,
     },
   });
 };
